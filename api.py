@@ -1,4 +1,6 @@
 from flask import Flask
+from flask import request
+
 from yahoo_data_fetcher import get_price
 
 
@@ -10,9 +12,20 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 
-@app.route("/api/")
-def api():
-    return get_price("DIS")
+@app.route("/api/<ticker>")
+def api(ticker):
+    return get_price(ticker)
+
+
+@app.route("/api/multiple/")
+def api_multiple():
+    tickers = request.args.get('tickers')
+    tickers = tickers.split(',')
+
+    result = []
+    for t in tickers:
+        result.append(get_price(t))
+    return result
 
 
 if __name__ == "__main__":
